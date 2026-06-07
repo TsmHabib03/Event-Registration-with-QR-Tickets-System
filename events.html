@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Ticket</title>
-  <link rel="stylesheet" href="../assets/css/main.css">
+  <title>Browse Events</title>
+  <link rel="stylesheet" href="./assets/css/main.css">
 </head>
 <body>
   <nav>
@@ -15,10 +15,11 @@
 
   <main>
     <div class="container">
-      <h1>Your Event Ticket</h1>
+      <h1>Upcoming Events</h1>
+      <p style="color: #666;">Browse and register for available events.</p>
 
-      <div style="max-width: 600px; margin: 30px auto;" id="ticket-info">
-        <p class="loading">Loading ticket...</p>
+      <div id="events-container">
+        <p class="loading">Loading events...</p>
       </div>
     </div>
   </main>
@@ -27,9 +28,8 @@
     <p>Event Registration System &copy; 2026 | Phase 1 Functionality</p>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="../assets/js/config.js"></script>
-  <script src="../assets/js/api.js"></script>
-  <script src="../assets/js/ticket.js"></script>
+  <script src="./assets/js/config.js"></script>
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/events.js"></script>
 </body>
 </html>
