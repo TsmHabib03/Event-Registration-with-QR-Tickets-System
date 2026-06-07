@@ -6,7 +6,7 @@
  */
 
 // Replace with your Google Apps Script web app deployment URL (ends in /exec)
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxhWFtFWuSRwWlWm0colKqiMqWND5kBsi9wcS_cof86xTasQIcneGqXLsGjI2Xb--op4g/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbx9GwaftzuM0aTGvIkiTW4JlBqmvuTSXjwCPlsCC_dLqn3AfgiyAMZBdE1g4c7elQOBiA/exec";
 
 // Admin password hash (SHA-256 of the admin password)
 // To generate:
