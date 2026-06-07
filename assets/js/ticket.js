@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <p style="margin: 6px 0;"><strong>Event:</strong> ${escapeHtml(event.name)}</p>
           <p style="margin: 6px 0;"><strong>Date:</strong> ${escapeHtml(date.toLocaleString())}</p>
           <p style="margin: 6px 0;"><strong>Location:</strong> ${escapeHtml(event.location)}</p>
+          <p style="margin: 6px 0;"><strong>Event ID:</strong> <span style="font-family: monospace; font-size: 12px; color: #888;">${escapeHtml(event.eventId)}</span></p>
         </div>
 
         <div id="checkin-status">
