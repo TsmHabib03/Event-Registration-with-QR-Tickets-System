@@ -112,39 +112,60 @@ function displayReport(rows) {
     return;
   }
 
+  const totalCheckedIn = rows.filter(r => r.checkedIn).length;
+
   let html = `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Registered At</th>
-          <th>Checked In</th>
-          <th>Checked In At</th>
-        </tr>
-      </thead>
-      <tbody>
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px;">
+      <div class="card" style="flex: 1; min-width: 120px; text-align: center; padding: 12px;">
+        <div style="font-size: 28px; font-weight: bold; color: var(--color-primary);">${rows.length}</div>
+        <div style="font-size: 12px; color: #666;">Registered</div>
+      </div>
+      <div class="card" style="flex: 1; min-width: 120px; text-align: center; padding: 12px;">
+        <div style="font-size: 28px; font-weight: bold; color: var(--color-success);">${totalCheckedIn}</div>
+        <div style="font-size: 12px; color: #666;">Checked In</div>
+      </div>
+      <div class="card" style="flex: 1; min-width: 120px; text-align: center; padding: 12px;">
+        <div style="font-size: 28px; font-weight: bold; color: #888;">${rows.length - totalCheckedIn}</div>
+        <div style="font-size: 12px; color: #666;">Absent</div>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Registered</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
   `;
 
-  rows.forEach(row => {
-    const checkedIn = row.checkedIn ? "Yes" : "No";
-    const checkedInAt = row.checkedInAt ? new Date(row.checkedInAt).toLocaleString() : "—";
-    const registeredAt = new Date(row.registeredAt).toLocaleString();
+  rows.forEach((row, i) => {
+    const regDate = new Date(row.registeredAt);
+    const shortDate = regDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const statusBadge = row.checkedIn
+      ? `<span style="background:#d4edda;color:#155724;padding:3px 8px;border-radius:3px;font-size:12px;">✓ Checked In</span>`
+      : `<span style="background:#f8d7da;color:#721c24;padding:3px 8px;border-radius:3px;font-size:12px;">Not Yet</span>`;
 
     html += `
       <tr>
-        <td>${escapeHtml(row.name)}</td>
-        <td>${escapeHtml(row.email)}</td>
-        <td>${escapeHtml(registeredAt)}</td>
-        <td>${checkedIn}</td>
-        <td>${escapeHtml(checkedInAt)}</td>
+        <td style="color:#888;">${i + 1}</td>
+        <td><strong>${escapeHtml(row.name)}</strong></td>
+        <td style="font-size:13px;">${escapeHtml(row.email)}</td>
+        <td style="font-size:13px;">${escapeHtml(shortDate)}</td>
+        <td>${statusBadge}</td>
       </tr>
     `;
   });
 
   html += `
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   `;
 
   container.innerHTML = html;

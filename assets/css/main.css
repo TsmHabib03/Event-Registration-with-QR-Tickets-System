@@ -226,3 +226,95 @@ footer {
   margin-top: 40px;
   font-size: 12px;
 }
+
+/* Table horizontal scroll wrapper */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 20px;
+}
+
+/* Ticket QR centering */
+.ticket-qr-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.ticket-qr-wrap canvas,
+.ticket-qr-wrap img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================================
+   Mobile — 768px and below
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Nav: smaller text, wrap if needed */
+  nav {
+    padding: 10px 12px;
+    line-height: 2;
+  }
+
+  nav a {
+    font-size: 13px;
+    margin-right: 12px;
+  }
+
+  /* Container: tighter side padding */
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Tables inside wrapper scroll horizontally */
+  .table {
+    min-width: 480px;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  /* Cards: less padding */
+  .card {
+    padding: 14px;
+  }
+
+  /* Forms: larger font prevents iOS auto-zoom */
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 16px;
+  }
+
+  /* Stats grid: single column on mobile */
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Admin nav buttons: stack vertically */
+  .admin-nav-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .admin-nav-btns .btn {
+    width: 100%;
+    text-align: center;
+    margin-right: 0 !important;
+  }
+
+  /* Page headings */
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+}
