@@ -7,6 +7,14 @@
  * NOTE: Phase 1 client-side auth only (not secure). Phase 2 must use API key or OAuth.
  */
 
+// Logout function (called directly from HTML onclick)
+function doLogout() {
+  console.log("Logout triggered");
+  localStorage.removeItem("adminAuthed");
+  localStorage.clear();
+  window.location.href = "admin-dashboard.html";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const loginSection = document.getElementById("login-section");
   const dashboardSection = document.getElementById("dashboard-section");
@@ -61,18 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Logout button - make sure it exists before attaching handler
-  const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      console.log("Logout clicked");
-      localStorage.removeItem("adminAuthed");
-      setTimeout(() => {
-        window.location.href = "admin-dashboard.html";
-      }, 100);
-    });
-  }
+  // Logout is now handled via onclick in HTML
 });
 
 async function hashPassword(password) {
