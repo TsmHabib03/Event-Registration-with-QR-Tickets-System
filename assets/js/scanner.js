@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function startScanning() {
   html5QrCode = new Html5Qrcode("qr-reader");
   await html5QrCode.start(
-    { facingMode: { ideal: currentFacingMode } },
+    { facingMode: currentFacingMode },
     { fps: 10, qrbox: { width: 240, height: 240 } },
     onScanSuccess,
     () => {}
