@@ -12,6 +12,7 @@ if (localStorage.getItem("adminAuthed") !== "true") {
 
 let scanner = null;
 let currentFacingMode = "environment"; // back camera by default
+let isScanning = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
   const startBtn = document.getElementById("start-scanner-btn");
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     startScanning();
     startBtn.style.display = "none";
     stopBtn.style.display = "inline-block";
+    switchBtn.style.display = "inline-block";
   });
 
   stopBtn.addEventListener("click", () => {
@@ -34,15 +36,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   switchBtn.addEventListener("click", () => {
+    if (!isScanning) return;
+    isScanning = false;
+    switchBtn.disabled = true;
+    switchBtn.textContent = "Switching...";
+
     currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
     stopScanning();
-    startScanning();
+
+    setTimeout(() => {
+      startScanning();
+      updateSwitchButtonText();
+      switchBtn.disabled = false;
+    }, 500);
   });
+
+  updateSwitchButtonText();
 });
+
+function updateSwitchButtonText() {
+  const switchBtn = document.getElementById("switch-camera-btn");
+  const mode = currentFacingMode === "environment" ? "Back" : "Front";
+  switchBtn.textContent = "📷 Switch to " + (currentFacingMode === "environment" ? "Front" : "Back") + " Camera";
+}
 
 function startScanning() {
   const resultDiv = document.getElementById("scan-result");
-  const switchBtn = document.getElementById("switch-camera-btn");
 
   try {
     scanner = new Html5QrcodeScanner(
@@ -50,13 +69,14 @@ function startScanning() {
       {
         fps: 10,
         qrbox: { width: 250, height: 250 },
-        facingMode: currentFacingMode
+        facingMode: { ideal: currentFacingMode },
+        rememberLastUsedCamera: false
       },
       false
     );
 
     scanner.render(onScanSuccess, onScanError);
-    switchBtn.style.display = "inline-block";
+    isScanning = true;
   } catch(err) {
     console.error("Scanner error:", err);
     resultDiv.innerHTML = '<div class="alert-error">Camera access denied or not available. Make sure you are using HTTPS.</div>';
@@ -68,7 +88,7 @@ function stopScanning() {
     scanner.clear();
     scanner = null;
   }
-  document.getElementById("switch-camera-btn").style.display = "none";
+  isScanning = false;
 }
 
 async function onScanSuccess(decodedText) {
