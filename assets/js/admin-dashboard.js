@@ -103,7 +103,7 @@ async function refreshDashboard() {
                 <th>Date</th>
                 <th>Location</th>
                 <th>Status</th>
-                <th>Registrations</th>
+                <th>Registered / Capacity</th>
               </tr>
             </thead>
             <tbody>
@@ -117,7 +117,7 @@ async function refreshDashboard() {
               <td>${escapeHtml(date.toLocaleString())}</td>
               <td>${escapeHtml(event.location)}</td>
               <td><span style="padding: 5px 10px; background: #e8f5e9; border-radius: 3px; font-size: 12px;">${escapeHtml(event.status)}</span></td>
-              <td>0 / ${event.capacity}</td>
+              <td>${event.registrationCount} / ${event.capacity} &nbsp; (${event.checkinCount} checked in)</td>
             </tr>
           `;
         });

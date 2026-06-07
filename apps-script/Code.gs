@@ -188,12 +188,30 @@ function getEvents() {
 }
 
 function getAllEvents() {
-  const sheet = getSheet("Events");
-  const data = sheet.getDataRange().getValues();
-  const events = [];
+  const eventsSheet = getSheet("Events");
+  const regsSheet = getSheet("Registrations");
 
-  for (let i = 1; i < data.length; i++) {
-    events.push(eventToObject(data[i]));
+  const eventsData = eventsSheet.getDataRange().getValues();
+  const regsData = regsSheet.getDataRange().getValues();
+
+  // Build count maps in one pass through Registrations
+  const regCount = {};
+  const checkinCount = {};
+  for (let i = 1; i < regsData.length; i++) {
+    const eid = regsData[i][REG_EVT_ID];
+    if (!eid) continue;
+    regCount[eid] = (regCount[eid] || 0) + 1;
+    if (String(regsData[i][REG_CHECKED]).toUpperCase() === "TRUE") {
+      checkinCount[eid] = (checkinCount[eid] || 0) + 1;
+    }
+  }
+
+  const events = [];
+  for (let i = 1; i < eventsData.length; i++) {
+    const ev = eventToObject(eventsData[i]);
+    ev.registrationCount = regCount[ev.eventId] || 0;
+    ev.checkinCount = checkinCount[ev.eventId] || 0;
+    events.push(ev);
   }
 
   return { success: true, events: events };
