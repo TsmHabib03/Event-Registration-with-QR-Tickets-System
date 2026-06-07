@@ -318,3 +318,44 @@ footer {
     font-size: 18px;
   }
 }
+
+/* ============================================================
+   Print styles — triggered by Print Ticket button
+   ============================================================ */
+@media print {
+  /* Hide nav, footer, and action buttons */
+  nav,
+  footer,
+  .ticket-actions,
+  h1 {
+    display: none !important;
+  }
+
+  /* Clean page */
+  body {
+    margin: 0;
+    background: white;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Keep QR block together, no page break inside */
+  .ticket-qr-wrap {
+    page-break-inside: avoid;
+  }
+
+  /* Fix QR size for print */
+  .ticket-qr-wrap canvas,
+  .ticket-qr-wrap img {
+    width: 200px !important;
+    height: 200px !important;
+  }
+
+  /* Force black text */
+  * {
+    color: black !important;
+  }
+}

@@ -50,9 +50,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         <div class="ticket-qr-wrap">
           <div id="qr-container"></div>
-          <button onclick="downloadQR()" class="btn" style="margin-top: 14px; padding: 10px 28px;">
-            Download QR Code
-          </button>
+          <div class="ticket-actions" style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <button onclick="downloadQR()" class="btn" style="padding: 10px 24px;">
+              &#11015; Download QR
+            </button>
+            <button onclick="window.print()" class="btn" style="padding: 10px 24px; background: #28a745;">
+              &#128424; Print Ticket
+            </button>
+          </div>
         </div>
 
         <div style="background: #f5f5f5; padding: 16px 20px; border-radius: 5px; margin: 20px 0; text-align: left;">
