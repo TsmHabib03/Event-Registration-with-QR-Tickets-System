@@ -9,10 +9,8 @@
 
 // Logout function (called directly from HTML onclick)
 function doLogout() {
-  console.log("Logout triggered");
   localStorage.removeItem("adminAuthed");
-  localStorage.clear();
-  window.location.href = "admin-dashboard.html";
+  location.reload();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,13 +18,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const dashboardSection = document.getElementById("dashboard-section");
   const loginForm = document.getElementById("login-form");
 
-  // TEMPORARY: Auto-login for testing (remove password check)
-  localStorage.setItem("adminAuthed", "true");
-  loginSection.style.display = "none";
-  dashboardSection.style.display = "block";
-  loadDashboard();
+  // Check if already authenticated
+  if (localStorage.getItem("adminAuthed") === "true") {
+    loginSection.style.display = "none";
+    dashboardSection.style.display = "block";
+    loadDashboard();
+  } else {
+    loginSection.style.display = "block";
+    dashboardSection.style.display = "none";
+  }
 
-  // Login form handler
+  // Login form handler - accept any password for Phase 1 testing
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -34,39 +36,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value;
     const messageDiv = document.getElementById("login-message");
 
-    messageDiv.innerHTML = '<p class="loading">Verifying...</p>';
-
-    try {
-      // TEMPORARY DEBUG: Accept any password (remove for production)
-      if (password.length > 0) {
-        localStorage.setItem("adminAuthed", "true");
-        messageDiv.innerHTML = '<div class="alert-success">Login successful!</div>';
-        setTimeout(() => {
-          loginSection.style.display = "none";
-          dashboardSection.style.display = "block";
-          loadDashboard();
-        }, 500);
-        return;
-      }
-
-      // Original hash verification (keeping for reference)
-      const hash = await hashPassword(password);
-
-      if (hash === ADMIN_PASSWORD_HASH) {
-        localStorage.setItem("adminAuthed", "true");
-        messageDiv.innerHTML = '<div class="alert-success">Login successful!</div>';
-        setTimeout(() => {
-          loginSection.style.display = "none";
-          dashboardSection.style.display = "block";
-          loadDashboard();
-        }, 500);
-      } else {
-        messageDiv.innerHTML = '<div class="alert-error">Incorrect password. Expected hash: ' + ADMIN_PASSWORD_HASH + '</div>';
-        passwordInput.value = "";
-      }
-    } catch(err) {
-      messageDiv.innerHTML = '<div class="alert-error">Error: ' + err.message + '</div>';
+    if (!password) {
+      messageDiv.innerHTML = '<div class="alert-error">Please enter a password.</div>';
+      return;
     }
+
+    messageDiv.innerHTML = '<p class="loading">Logging in...</p>';
+
+    // Accept any non-empty password for testing
+    setTimeout(() => {
+      localStorage.setItem("adminAuthed", "true");
+      messageDiv.innerHTML = '<div class="alert-success">Login successful!</div>';
+      setTimeout(() => {
+        loginSection.style.display = "none";
+        dashboardSection.style.display = "block";
+        loadDashboard();
+      }, 500);
+    }, 300);
   });
 
   // Logout is now handled via onclick in HTML
