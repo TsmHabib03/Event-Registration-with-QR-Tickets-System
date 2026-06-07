@@ -61,11 +61,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Logout button
-  document.getElementById("logout-btn").addEventListener("click", () => {
-    localStorage.removeItem("adminAuthed");
-    window.location.reload();
-  });
+  // Logout button - make sure it exists before attaching handler
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("Logout clicked");
+      localStorage.removeItem("adminAuthed");
+      setTimeout(() => {
+        window.location.href = "admin-dashboard.html";
+      }, 100);
+    });
+  }
 });
 
 async function hashPassword(password) {
