@@ -12,15 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const dashboardSection = document.getElementById("dashboard-section");
   const loginForm = document.getElementById("login-form");
 
-  // Check if already authenticated
-  if (localStorage.getItem("adminAuthed") === "true") {
-    loginSection.style.display = "none";
-    dashboardSection.style.display = "block";
-    loadDashboard();
-  } else {
-    loginSection.style.display = "block";
-    dashboardSection.style.display = "none";
-  }
+  // TEMPORARY: Auto-login for testing (remove password check)
+  localStorage.setItem("adminAuthed", "true");
+  loginSection.style.display = "none";
+  dashboardSection.style.display = "block";
+  loadDashboard();
 
   // Login form handler
   loginForm.addEventListener("submit", async (e) => {
