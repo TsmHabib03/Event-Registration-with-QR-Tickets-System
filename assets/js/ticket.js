@@ -120,9 +120,13 @@ function downloadQR() {
   document.body.removeChild(link);
 }
 
+// Fixed DOM-based XSS via flawed escapeHtml function
 function escapeHtml(text) {
   if (text === null || text === undefined) return "";
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

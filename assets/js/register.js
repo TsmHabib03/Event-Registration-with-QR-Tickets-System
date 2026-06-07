@@ -66,6 +66,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    // Fixed unrestricted form submissions (missing UI lock)
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+
     messageDiv.innerHTML = '<p class="loading">Processing...</p>';
 
     try {
@@ -105,15 +109,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch(err) {
       console.error("Registration error:", err);
       messageDiv.innerHTML = '<div class="alert-error">Error: ' + err.message + '</div>';
+    } finally {
+      // Re-enable submit button
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 });
 
+// Fixed DOM-based XSS via flawed escapeHtml function
 function escapeHtml(text) {
   if (text === null || text === undefined) return "";
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function isValidEmail(email) {
