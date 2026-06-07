@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register for Event</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="events.html">Browse Events</a>
+    <a href="admin-dashboard.html">Admin</a>
+  </nav>
+
+  <main>
+    <div class="container">
+      <h1>Event Registration</h1>
+
+      <div id="event-summary"></div>
+
+      <div style="max-width: 600px; margin: 30px auto;">
+        <form id="register-form" class="card">
+          <h2 style="margin-top: 0;">Register Now</h2>
+
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <button type="submit" class="btn" style="width: 100%; padding: 12px;">Register</button>
+        </form>
+
+        <div id="form-message"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Event Registration System &copy; 2026 | Phase 1 Functionality</p>
+  </footer>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/register.js"></script>
+</body>
+</html>

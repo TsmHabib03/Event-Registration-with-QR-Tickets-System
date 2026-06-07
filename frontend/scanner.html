@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Scanner - Check-in</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="admin-dashboard.html">Admin Dashboard</a>
+  </nav>
+
+  <main>
+    <div class="container">
+      <h1>Event Check-in Scanner</h1>
+      <p style="color: #666;">Scan QR codes to check attendees in. Requires admin authentication and HTTPS/camera access.</p>
+
+      <div style="max-width: 600px; margin: 30px auto;">
+        <div class="card">
+          <h2 style="margin-top: 0;">Scanner</h2>
+          <p style="color: #666; font-size: 12px;">Note: This page requires HTTPS and camera access. You must be authenticated as an admin.</p>
+
+          <div id="qr-reader" style="width: 100%;"></div>
+
+          <div style="margin-top: 20px;">
+            <button id="start-scanner-btn" class="btn" style="width: 100%; margin-bottom: 10px;">Start Camera</button>
+            <button id="stop-scanner-btn" class="btn" style="width: 100%; background: #dc3545; display: none;">Stop Camera</button>
+          </div>
+
+          <div id="scan-result"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Event Registration System &copy; 2026 | Phase 1 Functionality</p>
+  </footer>
+
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/scanner.js"></script>
+</body>
+</html>

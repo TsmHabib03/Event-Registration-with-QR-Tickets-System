@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Registration with QR Tickets</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="events.html">Browse Events</a>
+    <a href="admin-dashboard.html">Admin</a>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div style="text-align: center; padding: 60px 0;">
+        <h1>Event Registration with QR Tickets</h1>
+        <p style="color: #666; font-size: 18px;">Register for events and receive a unique QR ticket for instant check-in</p>
+
+        <div style="margin: 40px 0;">
+          <a href="events.html" class="btn" style="padding: 15px 40px; font-size: 16px;">Browse Events</a>
+        </div>
+      </div>
+
+      <div style="background: #f5f5f5; padding: 30px; border-radius: 5px; max-width: 600px; margin: 40px auto;">
+        <h3>Find Your Ticket</h3>
+        <form id="find-ticket-form">
+          <div class="form-group">
+            <label for="lookup-email">Email Address:</label>
+            <input type="email" id="lookup-email" required>
+          </div>
+          <div class="form-group">
+            <label for="lookup-event-id">Event ID (optional):</label>
+            <input type="text" id="lookup-event-id" placeholder="Leave blank to find all tickets">
+          </div>
+          <button type="submit" class="btn" style="width: 100%;">Find Ticket</button>
+        </form>
+        <div id="lookup-message"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Event Registration System &copy; 2026 | Phase 1 Functionality</p>
+  </footer>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script>
+    document.getElementById("find-ticket-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("lookup-email").value.trim();
+      const eventId = document.getElementById("lookup-event-id").value.trim();
+      const msgDiv = document.getElementById("lookup-message");
+
+      if (!email) {
+        msgDiv.innerHTML = '<div class="alert-error">Please enter your email address.</div>';
+        return;
+      }
+
+      if (eventId) {
+        window.location.href = `my-ticket.html?email=${encodeURIComponent(email)}&eventId=${encodeURIComponent(eventId)}`;
+      } else {
+        msgDiv.innerHTML = '<div class="alert-error">Please enter an Event ID to find your ticket.</div>';
+      }
+    });
+  </script>
+</body>
+</html>

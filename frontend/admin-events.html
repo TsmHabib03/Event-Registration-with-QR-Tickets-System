@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Manage Events</title>
+  <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="admin-dashboard.html">Admin Dashboard</a>
+    <a href="admin-events.html">Manage Events</a>
+    <a href="scanner.html">Check-in Scanner</a>
+    <a href="admin-reports.html">Reports</a>
+  </nav>
+
+  <main>
+    <div class="container">
+      <h1>Manage Events</h1>
+
+      <div style="max-width: 600px; margin: 30px 0;">
+        <div class="card">
+          <h2 style="margin-top: 0;">Create / Edit Event</h2>
+
+          <form id="event-form">
+            <input type="hidden" id="editing-event-id">
+
+            <div class="form-group">
+              <label for="name">Event Name *</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+              <label for="date">Date & Time *</label>
+              <input type="datetime-local" id="date" name="date" required>
+            </div>
+
+            <div class="form-group">
+              <label for="location">Location *</label>
+              <input type="text" id="location" name="location" required>
+            </div>
+
+            <div class="form-group">
+              <label for="capacity">Capacity (number of attendees) *</label>
+              <input type="number" id="capacity" name="capacity" min="1" required>
+            </div>
+
+            <div class="form-group">
+              <label for="status">Status *</label>
+              <select id="status" name="status" required>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button type="submit" id="form-submit-btn" class="btn" style="flex: 1;">Create Event</button>
+              <button type="button" id="cancel-edit-btn" class="btn" style="flex: 1; background: #6c757d; display: none;">Cancel</button>
+            </div>
+          </form>
+
+          <div id="form-message" style="margin-top: 15px;"></div>
+        </div>
+      </div>
+
+      <h2>Events List</h2>
+      <div id="events-list">
+        <p class="loading">Loading events...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Event Registration System &copy; 2026 | Phase 1 Functionality</p>
+  </footer>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/admin-events.js"></script>
+</body>
+</html>
