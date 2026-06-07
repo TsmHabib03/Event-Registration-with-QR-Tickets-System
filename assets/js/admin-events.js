@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    // Fixed unrestricted form submissions (missing UI lock)
+    submitBtn.disabled = true;
     messageDiv.innerHTML = '<p class="loading">Saving...</p>';
 
     try {
@@ -72,6 +74,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch(err) {
       console.error("Form error:", err);
       messageDiv.innerHTML = '<div class="alert-error">Error: ' + err.message + '</div>';
+    } finally {
+      // Re-enable submit button
+      submitBtn.disabled = false;
     }
   });
 
@@ -182,9 +187,13 @@ async function archiveEvent(eventId, eventName) {
   }
 }
 
+// Fixed DOM-based XSS via flawed escapeHtml function
 function escapeHtml(text) {
   if (text === null || text === undefined) return "";
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

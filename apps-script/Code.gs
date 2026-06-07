@@ -84,7 +84,9 @@ function doGet(e) {
         result = { success: false, error: "Unknown action: " + action };
     }
   } catch(err) {
-    result = { success: false, error: err.toString() };
+    // Fixed Sensitive Information Leakage by logging error and returning generic message
+    console.error(err);
+    result = { success: false, error: "An internal server error occurred." };
   }
 
   return ContentService
@@ -95,6 +97,14 @@ function doGet(e) {
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
+
+// Fixed Google Sheets Formula Injection (CSV Injection)
+function sanitizeSheetInput(value) {
+  if (typeof value === 'string' && /^[=\+\-@]/.test(value)) {
+    return "'" + value;
+  }
+  return value;
+}
 
 function getSheet(sheetName) {
   return SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(sheetName);
@@ -361,17 +371,24 @@ function createEvent(params) {
   const name = params.name;
   const date = params.date;
   const location = params.location;
-  const capacity = params.capacity;
+  let capacity = params.capacity;
   const status = params.status || "draft";
 
   if (!name || !date || !location || !capacity) {
     return { success: false, error: "Missing required fields: name, date, location, capacity" };
   }
 
+  // Fixed Missing Backend Data Constraints (Length and Type)
+  capacity = parseInt(capacity, 10);
+  if (isNaN(capacity) || capacity < 1) return { success: false, error: "Capacity must be a positive number." };
+  if (name.length > 200) return { success: false, error: "Name too long." };
+  if (location.length > 200) return { success: false, error: "Location too long." };
+
   const eventId = Utilities.getUuid();
   const sheet = getSheet("Events");
 
-  sheet.appendRow([eventId, name, date, location, capacity, status]);
+  // Fixed Google Sheets Formula Injection (CSV Injection)
+  sheet.appendRow([eventId, sanitizeSheetInput(name), date, sanitizeSheetInput(location), capacity, status]);
 
   return { success: true, eventId: eventId };
 }
@@ -383,6 +400,15 @@ function updateEvent(params) {
     return { success: false, error: "Missing eventId" };
   }
 
+  // Fixed Missing Backend Data Constraints (Length and Type)
+  if (params.capacity) {
+    const parsedCapacity = parseInt(params.capacity, 10);
+    if (isNaN(parsedCapacity) || parsedCapacity < 1) return { success: false, error: "Capacity must be a positive number." };
+    params.capacity = parsedCapacity;
+  }
+  if (params.name && params.name.length > 200) return { success: false, error: "Name too long." };
+  if (params.location && params.location.length > 200) return { success: false, error: "Location too long." };
+
   const result = findEventById(eventId);
   if (!result) {
     return { success: false, error: "Event not found" };
@@ -391,9 +417,10 @@ function updateEvent(params) {
   const sheet = getSheet("Events");
   const rowNum = result.row;
 
-  if (params.name) sheet.getRange(rowNum, EVT_NAME + 1).setValue(params.name);
+  // Fixed Google Sheets Formula Injection (CSV Injection)
+  if (params.name) sheet.getRange(rowNum, EVT_NAME + 1).setValue(sanitizeSheetInput(params.name));
   if (params.date) sheet.getRange(rowNum, EVT_DATE + 1).setValue(params.date);
-  if (params.location) sheet.getRange(rowNum, EVT_LOC + 1).setValue(params.location);
+  if (params.location) sheet.getRange(rowNum, EVT_LOC + 1).setValue(sanitizeSheetInput(params.location));
   if (params.capacity) sheet.getRange(rowNum, EVT_CAP + 1).setValue(params.capacity);
   if (params.status) sheet.getRange(rowNum, EVT_STATUS + 1).setValue(params.status);
 
@@ -429,6 +456,10 @@ function registerAttendee(params) {
     return { success: false, error: "Invalid email format" };
   }
 
+  // Fixed Missing Backend Data Constraints (Length and Type)
+  if (name.length > 200) return { success: false, error: "Name too long." };
+  if (email.length > 200) return { success: false, error: "Email too long." };
+
   // Check if already registered
   const existing = findRegistrationByEmailAndEvent(email, eventId);
   if (existing) {
@@ -445,21 +476,32 @@ function registerAttendee(params) {
     return { success: false, error: "Event is not available for registration" };
   }
 
-  // Check capacity
-  const capacity = event[EVT_CAP];
-  const currentCount = countRegistrationsForEvent(eventId);
-  if (currentCount >= capacity) {
-    return { success: false, error: "event_full" };
+  // Fixed Overbooking via Concurrent appendRow Race Condition
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+
+    // Check capacity
+    const capacity = event[EVT_CAP];
+    const currentCount = countRegistrationsForEvent(eventId);
+    if (currentCount >= capacity) {
+      return { success: false, error: "event_full" };
+    }
+
+    // Generate UUIDs
+    const registrationId = Utilities.getUuid();
+    const qrToken = Utilities.getUuid();
+    const now = new Date().toISOString();
+
+    // Append registration
+    const sheet = getSheet("Registrations");
+    // Fixed Google Sheets Formula Injection (CSV Injection)
+    sheet.appendRow([registrationId, eventId, sanitizeSheetInput(name), sanitizeSheetInput(email), qrToken, "FALSE", now, ""]);
+  } catch(e) {
+    return { success: false, error: "System busy. Please try again." };
+  } finally {
+    lock.releaseLock();
   }
-
-  // Generate UUIDs
-  const registrationId = Utilities.getUuid();
-  const qrToken = Utilities.getUuid();
-  const now = new Date().toISOString();
-
-  // Append registration
-  const sheet = getSheet("Registrations");
-  sheet.appendRow([registrationId, eventId, name, email, qrToken, "FALSE", now, ""]);
 
   // Send email
   sendConfirmationEmail(email, name, eventToObject(event), qrToken);

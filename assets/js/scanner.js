@@ -94,9 +94,20 @@ async function stopScanning() {
   isScanning = false;
 }
 
+// Fixed Rapid Re-scanning of the Same QR Code by adding cooldown
+let lastScannedText = null;
+let lastScanTime = 0;
+
 async function onScanSuccess(decodedText) {
   if (!isScanning || isBusy) return;
+
+  if (decodedText === lastScannedText && (Date.now() - lastScanTime) < 3000) {
+    return;
+  }
+
   isBusy = true;
+  lastScannedText = decodedText;
+  lastScanTime = Date.now();
   setStatus("processing");
 
   try {
@@ -168,9 +179,13 @@ function showResult(type, title, message) {
   `;
 }
 
+// Fixed DOM-based XSS via flawed escapeHtml function
 function escapeHtml(text) {
   if (text === null || text === undefined) return "";
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
