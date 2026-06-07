@@ -96,6 +96,7 @@ async function refreshDashboard() {
         html = '<p style="text-align: center; color: #666;">No events yet.</p>';
       } else {
         html += `
+          <div class="table-wrapper">
           <table class="table">
             <thead>
               <tr>
@@ -103,7 +104,8 @@ async function refreshDashboard() {
                 <th>Date</th>
                 <th>Location</th>
                 <th>Status</th>
-                <th>Registered / Capacity</th>
+                <th>Registered</th>
+                <th>Checked In</th>
               </tr>
             </thead>
             <tbody>
@@ -111,13 +113,17 @@ async function refreshDashboard() {
 
         events.forEach(event => {
           const date = new Date(event.date);
+          const statusClass = event.status === "published" ? "badge-success"
+                            : event.status === "draft"     ? "badge-warning"
+                            :                                "badge-secondary";
           html += `
             <tr>
               <td>${escapeHtml(event.name)}</td>
-              <td>${escapeHtml(date.toLocaleString())}</td>
+              <td>${escapeHtml(date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }))}</td>
               <td>${escapeHtml(event.location)}</td>
-              <td><span style="padding: 5px 10px; background: #e8f5e9; border-radius: 3px; font-size: 12px;">${escapeHtml(event.status)}</span></td>
-              <td>${event.registrationCount || 0} / ${event.capacity} &nbsp; (${event.checkinCount || 0} checked in)</td>
+              <td><span class="badge ${statusClass}">${escapeHtml(event.status)}</span></td>
+              <td>${event.registrationCount || 0} / ${event.capacity}</td>
+              <td>${event.checkinCount || 0}</td>
             </tr>
           `;
         });
@@ -125,6 +131,7 @@ async function refreshDashboard() {
         html += `
             </tbody>
           </table>
+          </div>
         `;
       }
 

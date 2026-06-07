@@ -515,7 +515,7 @@ function checkIn(token) {
 // ============================================================================
 
 function sendConfirmationEmail(email, name, event, qrToken) {
-  const subject = "✅ You're registered! Ticket for " + event.name;
+  const subject = "Registration Confirmed: " + event.name;
   const qrImageUrl = "https://chart.googleapis.com/chart?chs=280x280&cht=qr&chl=" + encodeURIComponent(qrToken);
   const eventDate = new Date(event.date).toLocaleString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
@@ -526,13 +526,12 @@ function sendConfirmationEmail(email, name, event, qrToken) {
     <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
 
       <div style="background:#007bff;padding:28px 24px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">🎟️</div>
         <h1 style="color:white;margin:0;font-size:22px;font-weight:700;">Registration Confirmed</h1>
         <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Your ticket has been issued</p>
       </div>
 
       <div style="padding:28px 24px 0;">
-        <h2 style="margin:0 0 8px;color:#222;font-size:18px;">Hi ${name}! 👋</h2>
+        <h2 style="margin:0 0 8px;color:#222;font-size:18px;">Hi ${name},</h2>
         <p style="margin:0;color:#555;font-size:14px;line-height:1.6;">
           You're all set for <strong>${event.name}</strong>. Show the QR code below when you arrive — staff will scan it to check you in.
         </p>
@@ -547,7 +546,7 @@ function sendConfirmationEmail(email, name, event, qrToken) {
 
       <div style="margin:0 24px 24px;background:#f8f9fa;border-radius:8px;overflow:hidden;">
         <div style="background:#e9ecef;padding:10px 16px;">
-          <strong style="color:#444;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;">📅 Event Details</strong>
+          <strong style="color:#444;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;">Event Details</strong>
         </div>
         <table style="width:100%;border-collapse:collapse;">
           <tr>
@@ -567,7 +566,7 @@ function sendConfirmationEmail(email, name, event, qrToken) {
 
       <div style="margin:0 24px 28px;background:#e8f4fd;border-left:4px solid #007bff;border-radius:4px;padding:12px 16px;">
         <p style="margin:0;color:#004085;font-size:13px;line-height:1.5;">
-          💡 <strong>Tip:</strong> Save this email or screenshot your QR code. You can also print this page for a physical ticket.
+          <strong>Tip:</strong> Save this email or screenshot your QR code. You can also print this page for a physical ticket.
         </p>
       </div>
 
@@ -587,7 +586,7 @@ function sendConfirmationEmail(email, name, event, qrToken) {
 }
 
 function sendCheckInAlert(attendeeEmail, attendeeName, eventName) {
-  const subject = "✅ Checked In: " + attendeeName + " — " + eventName;
+  const subject = "Check-in Alert: " + attendeeName + " at " + eventName;
   const checkInTime = new Date().toLocaleString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
     hour: "2-digit", minute: "2-digit", second: "2-digit"
@@ -597,7 +596,6 @@ function sendCheckInAlert(attendeeEmail, attendeeName, eventName) {
     <div style="font-family:Arial,Helvetica,sans-serif;max-width:500px;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
 
       <div style="background:#28a745;padding:24px;text-align:center;">
-        <div style="font-size:32px;margin-bottom:8px;">✅</div>
         <h1 style="color:white;margin:0;font-size:20px;font-weight:700;">Attendee Checked In</h1>
       </div>
 

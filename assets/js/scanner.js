@@ -1,153 +1,169 @@
 /**
  * QR Scanner Page (Check-in)
  *
- * Allows staff to scan QR codes and check attendees in.
- * Requires camera access and HTTPS.
+ * Uses Html5Qrcode (not Html5QrcodeScanner) for full camera API control.
+ * Requires HTTPS and admin authentication.
  */
 
-// Auth gate: redirect if not authenticated
 if (localStorage.getItem("adminAuthed") !== "true") {
   window.location.href = "admin-dashboard.html";
 }
 
-let scanner = null;
-let currentFacingMode = "environment"; // back camera by default
+let html5QrCode = null;
+let currentFacingMode = "environment";
 let isScanning = false;
+let isBusy = false;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const startBtn = document.getElementById("start-scanner-btn");
-  const stopBtn = document.getElementById("stop-scanner-btn");
-  const switchBtn = document.getElementById("switch-camera-btn");
-  const resultDiv = document.getElementById("scan-result");
+document.addEventListener("DOMContentLoaded", () => {
+  const startBtn  = document.getElementById("start-btn");
+  const stopBtn   = document.getElementById("stop-btn");
+  const switchBtn = document.getElementById("switch-btn");
 
-  startBtn.addEventListener("click", () => {
-    startScanning();
-    startBtn.style.display = "none";
-    stopBtn.style.display = "inline-block";
-    switchBtn.style.display = "inline-block";
+  startBtn.addEventListener("click", async () => {
+    if (isBusy) return;
+    isBusy = true;
+    setStatus("starting");
+    try {
+      await startScanning();
+      setStatus("scanning");
+      startBtn.style.display  = "none";
+      stopBtn.style.display   = "flex";
+      switchBtn.style.display = "flex";
+    } catch (err) {
+      console.error("Start error:", err);
+      showResult("error", "Camera Error", "Could not access camera. Make sure you are using HTTPS and camera permission is granted.");
+      setStatus("idle");
+    }
+    isBusy = false;
   });
 
-  stopBtn.addEventListener("click", () => {
-    stopScanning();
-    startBtn.style.display = "inline-block";
-    stopBtn.style.display = "none";
+  stopBtn.addEventListener("click", async () => {
+    if (isBusy) return;
+    isBusy = true;
+    setStatus("stopping");
+    await stopScanning();
+    setStatus("idle");
+    startBtn.style.display  = "flex";
+    stopBtn.style.display   = "none";
     switchBtn.style.display = "none";
-    resultDiv.innerHTML = "";
+    document.getElementById("scan-result").innerHTML = "";
+    isBusy = false;
   });
 
-  switchBtn.addEventListener("click", () => {
-    if (!isScanning) return;
-    isScanning = false;
+  switchBtn.addEventListener("click", async () => {
+    if (isBusy || !isScanning) return;
+    isBusy = true;
     switchBtn.disabled = true;
-    switchBtn.textContent = "Switching...";
+    switchBtn.querySelector(".btn-label").textContent = "Switching...";
+    setStatus("starting");
 
     currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
-    stopScanning();
-
-    setTimeout(() => {
-      startScanning();
-      updateSwitchButtonText();
-      switchBtn.disabled = false;
-    }, 500);
+    await stopScanning();
+    try {
+      await startScanning();
+      setStatus("scanning");
+      updateSwitchLabel();
+    } catch (err) {
+      console.error("Switch error:", err);
+      setStatus("idle");
+    }
+    switchBtn.disabled = false;
+    isBusy = false;
   });
-
-  updateSwitchButtonText();
 });
 
-function updateSwitchButtonText() {
-  const switchBtn = document.getElementById("switch-camera-btn");
-  const mode = currentFacingMode === "environment" ? "Back" : "Front";
-  switchBtn.textContent = "📷 Switch to " + (currentFacingMode === "environment" ? "Front" : "Back") + " Camera";
+async function startScanning() {
+  html5QrCode = new Html5Qrcode("qr-reader");
+  await html5QrCode.start(
+    { facingMode: { ideal: currentFacingMode } },
+    { fps: 10, qrbox: { width: 240, height: 240 } },
+    onScanSuccess,
+    () => {}
+  );
+  isScanning = true;
 }
 
-function startScanning() {
-  const resultDiv = document.getElementById("scan-result");
-
-  try {
-    scanner = new Html5QrcodeScanner(
-      "qr-reader",
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        facingMode: { ideal: currentFacingMode },
-        rememberLastUsedCamera: false
-      },
-      false
-    );
-
-    scanner.render(onScanSuccess, onScanError);
-    isScanning = true;
-  } catch(err) {
-    console.error("Scanner error:", err);
-    resultDiv.innerHTML = '<div class="alert-error">Camera access denied or not available. Make sure you are using HTTPS.</div>';
-  }
-}
-
-function stopScanning() {
-  if (scanner) {
-    scanner.clear();
-    scanner = null;
+async function stopScanning() {
+  if (html5QrCode && isScanning) {
+    try {
+      await html5QrCode.stop();
+    } catch (e) { /* ignore stop errors */ }
+    html5QrCode.clear();
+    html5QrCode = null;
   }
   isScanning = false;
 }
 
 async function onScanSuccess(decodedText) {
-  if (!scanner) return;
-
-  // Pause scanner while processing
-  scanner.pause();
-
-  const resultDiv = document.getElementById("scan-result");
+  if (!isScanning || isBusy) return;
+  isBusy = true;
+  setStatus("processing");
 
   try {
-    // Validate QR
     const validation = await API.validateQR(decodedText);
 
     if (validation.status === "not_found") {
-      showScanResult("error", "Invalid QR Code", "This ticket does not exist in the system.");
+      showResult("error", "Invalid QR Code", "This ticket does not exist in the system.");
     } else if (validation.status === "already_checked_in") {
-      showScanResult("warning", "Already Checked In", validation.name + " was already checked in at " + new Date(validation.checkedInAt).toLocaleTimeString());
+      showResult("warning", "Already Checked In", validation.name + " was already checked in at " + new Date(validation.checkedInAt).toLocaleTimeString());
     } else if (validation.status === "valid") {
-      // Check in
       const checkinResult = await API.checkIn(decodedText);
-
       if (checkinResult.success) {
-        showScanResult("success", "Welcome!", checkinResult.name + " has been checked in.");
+        showResult("success", "Checked In", checkinResult.name + " has been successfully checked in.");
       } else {
-        showScanResult("error", "Check-in Failed", checkinResult.error || "An error occurred.");
+        showResult("error", "Check-in Failed", checkinResult.error || "An error occurred.");
       }
     } else {
-      showScanResult("error", "Unknown Status", "Unexpected response from server.");
+      showResult("error", "Unknown Response", "Unexpected response from server.");
     }
-  } catch(err) {
+  } catch (err) {
     console.error("Scan error:", err);
-    showScanResult("error", "Error", err.message);
+    showResult("error", "Network Error", err.message);
   }
 
-  // Resume scanning after a delay
-  setTimeout(() => {
-    if (scanner) {
-      scanner.resume();
-    }
-  }, 3000);
+  setStatus("scanning");
+  isBusy = false;
 }
 
-function onScanError(err) {
-  // Ignore frame-level errors during scanning
-  // console.log("Frame error:", err);
+function setStatus(state) {
+  const dot  = document.getElementById("status-dot");
+  const text = document.getElementById("status-text");
+
+  dot.className = "scanner-status-dot";
+  switch (state) {
+    case "idle":
+      text.textContent = "Idle — camera off";
+      break;
+    case "starting":
+      dot.classList.add("pending");
+      text.textContent = "Starting camera...";
+      break;
+    case "scanning":
+      dot.classList.add("active");
+      text.textContent = "Scanning — point at QR code";
+      break;
+    case "processing":
+      dot.classList.add("pending");
+      text.textContent = "Processing scan...";
+      break;
+    case "stopping":
+      text.textContent = "Stopping...";
+      break;
+  }
 }
 
-function showScanResult(type, title, message) {
+function updateSwitchLabel() {
+  const label = document.getElementById("switch-btn").querySelector(".btn-label");
+  label.textContent = currentFacingMode === "environment" ? "Switch to Front Camera" : "Switch to Back Camera";
+}
+
+function showResult(type, title, message) {
   const resultDiv = document.getElementById("scan-result");
-
-  let className = "alert-error";
-  if (type === "success") className = "alert-success";
-  if (type === "warning") className = "alert-warning";
-
+  const cls = type === "success" ? "alert-success" : type === "warning" ? "alert-warning" : "alert-error";
   resultDiv.innerHTML = `
-    <div class="${className}" style="padding: 15px; margin: 20px 0;">
-      <h3 style="margin: 0 0 10px 0;">${escapeHtml(title)}</h3>
-      <p style="margin: 0;">${escapeHtml(message)}</p>
+    <div class="${cls} scan-result-box">
+      <strong>${escapeHtml(title)}</strong>
+      <p style="margin:6px 0 0;">${escapeHtml(message)}</p>
     </div>
   `;
 }
