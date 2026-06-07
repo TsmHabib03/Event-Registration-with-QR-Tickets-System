@@ -516,7 +516,7 @@ function checkIn(token) {
 
 function sendConfirmationEmail(email, name, event, qrToken) {
   const subject = "Registration Confirmed: " + event.name;
-  const qrImageUrl = "https://chart.googleapis.com/chart?chs=280x280&cht=qr&chl=" + encodeURIComponent(qrToken);
+  const qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=" + encodeURIComponent(qrToken);
   const eventDate = new Date(event.date).toLocaleString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
     hour: "2-digit", minute: "2-digit"
