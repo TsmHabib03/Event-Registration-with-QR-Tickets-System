@@ -4,9 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Ticket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./assets/css/main.css">
 </head>
-<body>
+<body id="top">
   <nav>
     <a href="index.html">Home</a>
     <a href="events.html">Browse Events</a>
@@ -31,5 +34,14 @@
   <script src="./assets/js/config.js"></script>
   <script src="./assets/js/api.js"></script>
   <script src="./assets/js/ticket.js"></script>
+  <a href="#" class="scroll-top" id="scroll-top-btn" aria-label="Scroll to top">&uarr;</a>
+  <script>
+    (function() {
+      var btn = document.getElementById('scroll-top-btn');
+      window.addEventListener('scroll', function() {
+        btn.classList.toggle('visible', window.scrollY > 300);
+      });
+    })();
+  </script>
 </body>
 </html>

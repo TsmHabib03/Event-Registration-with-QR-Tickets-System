@@ -4,24 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./assets/css/main.css">
 </head>
-<body>
+<body id="top">
   <nav>
     <a href="index.html">Home</a>
     <a href="events.html">Browse Events</a>
-    <a href="admin-dashboard.html">Admin</a>
+    <a href="admin-dashboard.html" class="active">Admin</a>
   </nav>
 
   <main>
     <div class="container">
-      <h1>Admin Dashboard</h1>
+      <div class="hero-section" style="padding: 20px 0 20px;">
+        <h1 class="hero-title">
+          <span class="hero-line"><span class="hero-word" style="font-size: 2.5rem; letter-spacing: 0.1em;">Admin</span></span>
+          <span class="hero-line"><span class="hero-word" style="font-size: 3.5rem; letter-spacing: -0.03em;">Dashboard</span></span>
+        </h1>
+      </div>
 
       <!-- Login Section -->
       <div id="login-section" style="max-width: 500px; margin: 40px auto;">
         <div class="card">
           <h2 style="margin-top: 0;">Admin Login</h2>
-          <p style="color: #666; font-size: 12px;">Enter your password to access the admin dashboard.</p>
+          <p style="color: var(--text-muted); font-size: 12px;">Enter your password to access the admin dashboard.</p>
 
           <form id="login-form">
             <div class="form-group">
@@ -41,23 +49,23 @@
           <a href="admin-events.html" class="btn" style="margin-right: 10px;">Manage Events</a>
           <a href="scanner.html" class="btn" style="margin-right: 10px;">Check-in Scanner</a>
           <a href="admin-reports.html" class="btn" style="margin-right: 10px;">Reports</a>
-          <button onclick="doLogout()" class="btn" style="background: #6c757d;">Logout</button>
+          <button onclick="doLogout()" class="btn btn-secondary">Logout</button>
         </div>
 
         <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
-          <div class="card" style="text-align: center;">
-            <h3 style="color: #666; font-size: 12px; text-transform: uppercase; margin: 0 0 10px 0;">Total Events</h3>
-            <div style="font-size: 32px; font-weight: bold; color: var(--color-primary);" id="stat-events">—</div>
+          <div class="card stat-card" style="text-align: center;">
+            <h3>Total Events</h3>
+            <div id="stat-events">—</div>
           </div>
 
-          <div class="card" style="text-align: center;">
-            <h3 style="color: #666; font-size: 12px; text-transform: uppercase; margin: 0 0 10px 0;">Total Registrations</h3>
-            <div style="font-size: 32px; font-weight: bold; color: var(--color-primary);" id="stat-registrations">—</div>
+          <div class="card stat-card" style="text-align: center;">
+            <h3>Total Registrations</h3>
+            <div id="stat-registrations">—</div>
           </div>
 
-          <div class="card" style="text-align: center;">
-            <h3 style="color: #666; font-size: 12px; text-transform: uppercase; margin: 0 0 10px 0;">Total Check-ins</h3>
-            <div style="font-size: 32px; font-weight: bold; color: var(--color-success);" id="stat-checkins">—</div>
+          <div class="card stat-card" style="text-align: center;">
+            <h3>Total Check-ins</h3>
+            <div id="stat-checkins">—</div>
           </div>
         </div>
 
@@ -66,7 +74,7 @@
           <p class="loading">Loading events...</p>
         </div>
 
-        <p style="color: #666; font-size: 11px; margin-top: 30px;">
+        <p style="color: var(--text-muted); font-size: 11px; margin-top: 30px;">
           Dashboard auto-refreshes every 5 seconds.
         </p>
       </div>
@@ -80,5 +88,14 @@
   <script src="./assets/js/config.js"></script>
   <script src="./assets/js/api.js"></script>
   <script src="./assets/js/admin-dashboard.js"></script>
+  <a href="#" class="scroll-top" id="scroll-top-btn" aria-label="Scroll to top">&uarr;</a>
+  <script>
+    (function() {
+      var btn = document.getElementById('scroll-top-btn');
+      window.addEventListener('scroll', function() {
+        btn.classList.toggle('visible', window.scrollY > 300);
+      });
+    })();
+  </script>
 </body>
 </html>

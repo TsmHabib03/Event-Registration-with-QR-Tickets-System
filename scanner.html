@@ -4,18 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Check-in Scanner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./assets/css/main.css">
 </head>
-<body>
+<body id="top">
   <nav>
     <a href="index.html">Home</a>
     <a href="admin-dashboard.html">Admin Dashboard</a>
+    <a href="admin-events.html">Manage Events</a>
+    <a href="scanner.html" class="active">Check-in Scanner</a>
+    <a href="admin-reports.html">Reports</a>
   </nav>
 
   <main>
     <div class="container">
-      <h1>Event Check-in Scanner</h1>
-      <p style="color:#666; margin-bottom:24px;">Scan attendee QR codes to check them in. Requires HTTPS and camera permission.</p>
+      <div class="hero-section" style="padding: 20px 0 20px;">
+        <h1 class="hero-title">
+          <span class="hero-line"><span class="hero-word" style="font-size: 2.5rem; letter-spacing: 0.1em;">Check-in</span></span>
+          <span class="hero-line"><span class="hero-word" style="font-size: 3.5rem; letter-spacing: -0.03em;">Scanner</span></span>
+        </h1>
+        <p style="color:var(--text-secondary); margin-bottom:24px;">Scan attendee QR codes to check them in. Requires HTTPS and camera permission.</p>
+      </div>
 
       <div class="scanner-card">
         <div class="card">
@@ -77,5 +88,14 @@
   <script src="./assets/js/config.js"></script>
   <script src="./assets/js/api.js"></script>
   <script src="./assets/js/scanner.js"></script>
+  <a href="#" class="scroll-top" id="scroll-top-btn" aria-label="Scroll to top">&uarr;</a>
+  <script>
+    (function() {
+      var btn = document.getElementById('scroll-top-btn');
+      window.addEventListener('scroll', function() {
+        btn.classList.toggle('visible', window.scrollY > 300);
+      });
+    })();
+  </script>
 </body>
 </html>

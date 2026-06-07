@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Fixed unrestricted form submissions (missing UI lock)
     const submitBtn = e.target.querySelector('button[type="submit"]');
     if (submitBtn) submitBtn.disabled = true;
 
@@ -116,7 +115,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-// Fixed DOM-based XSS via flawed escapeHtml function
 function escapeHtml(text) {
   if (text === null || text === undefined) return "";
   return String(text)
