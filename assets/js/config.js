@@ -15,4 +15,4 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxUvD_Hvn95PvQVVINCDd2l
 //
 // Example: password "admin123" → hash below
 // NOTE: Phase 1 client-side auth only. Phase 2 must use API key or OAuth.
-const ADMIN_PASSWORD_HASH = "9f86d081884c7d6d9ffd60014fc7ee77e7c3d434b92cc6ff34c3fa1e8ff4e5a1"; // password: "test" (verified working)
+const ADMIN_PASSWORD_HASH = "e86f78a8a3caf0b60d8e74e5942aa6d86dc150cd3c03338aef25b7d2d7e3acc7";

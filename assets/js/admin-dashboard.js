@@ -28,31 +28,38 @@ document.addEventListener("DOMContentLoaded", () => {
     dashboardSection.style.display = "none";
   }
 
-  // Login form handler - accept any password for Phase 1 testing
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const passwordInput = document.getElementById("password");
     const password = passwordInput.value;
     const messageDiv = document.getElementById("login-message");
+    const btn = loginForm.querySelector("button[type=submit]");
 
     if (!password) {
       messageDiv.innerHTML = '<div class="alert-error">Please enter a password.</div>';
       return;
     }
 
-    messageDiv.innerHTML = '<p class="loading">Logging in...</p>';
+    btn.disabled = true;
+    btn.textContent = "Logging in...";
+    messageDiv.innerHTML = "";
 
-    // Accept any non-empty password for testing
-    setTimeout(() => {
-      localStorage.setItem("adminAuthed", "true");
-      messageDiv.innerHTML = '<div class="alert-success">Login successful!</div>';
-      setTimeout(() => {
-        loginSection.style.display = "none";
-        dashboardSection.style.display = "block";
-        loadDashboard();
-      }, 500);
-    }, 300);
+    hashPassword(password).then(hash => {
+      if (hash === ADMIN_PASSWORD_HASH) {
+        localStorage.setItem("adminAuthed", "true");
+        messageDiv.innerHTML = '<div class="alert-success">Login successful!</div>';
+        setTimeout(() => {
+          loginSection.style.display = "none";
+          dashboardSection.style.display = "block";
+          loadDashboard();
+        }, 500);
+      } else {
+        btn.disabled = false;
+        btn.textContent = "Login";
+        messageDiv.innerHTML = '<div class="alert-error">Incorrect password.</div>';
+      }
+    });
   });
 
   // Logout is now handled via onclick in HTML
