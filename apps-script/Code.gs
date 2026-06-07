@@ -515,53 +515,123 @@ function checkIn(token) {
 // ============================================================================
 
 function sendConfirmationEmail(email, name, event, qrToken) {
-  const subject = "Your Ticket for " + event.name;
-
-  const qrImageUrl = "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + encodeURIComponent(qrToken);
+  const subject = "✅ You're registered! Ticket for " + event.name;
+  const qrImageUrl = "https://chart.googleapis.com/chart?chs=280x280&cht=qr&chl=" + encodeURIComponent(qrToken);
+  const eventDate = new Date(event.date).toLocaleString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+    hour: "2-digit", minute: "2-digit"
+  });
 
   const htmlBody = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2 style="color: #333;">Welcome, ${name}!</h2>
-      <p>Thank you for registering for our event. Your QR ticket is below:</p>
+    <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
 
-      <div style="text-align: center; margin: 30px 0;">
-        <img src="${qrImageUrl}" alt="Your QR Ticket" style="width: 250px; height: 250px;">
+      <div style="background:#007bff;padding:28px 24px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:8px;">🎟️</div>
+        <h1 style="color:white;margin:0;font-size:22px;font-weight:700;">Registration Confirmed</h1>
+        <p style="color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:14px;">Your ticket has been issued</p>
       </div>
 
-      <div style="background: #f5f5f5; padding: 20px; border-radius: 5px; margin: 30px 0;">
-        <h3 style="margin-top: 0;">Event Details</h3>
-        <p><strong>Event:</strong> ${event.name}</p>
-        <p><strong>Date:</strong> ${new Date(event.date).toLocaleString()}</p>
-        <p><strong>Location:</strong> ${event.location}</p>
+      <div style="padding:28px 24px 0;">
+        <h2 style="margin:0 0 8px;color:#222;font-size:18px;">Hi ${name}! 👋</h2>
+        <p style="margin:0;color:#555;font-size:14px;line-height:1.6;">
+          You're all set for <strong>${event.name}</strong>. Show the QR code below when you arrive — staff will scan it to check you in.
+        </p>
       </div>
 
-      <p>Please present your QR code at check-in. You can print this email or show the QR code from your phone.</p>
+      <div style="padding:24px;text-align:center;">
+        <div style="display:inline-block;background:#f8f9fa;border:2px dashed #ced4da;border-radius:10px;padding:20px;">
+          <img src="${qrImageUrl}" alt="QR Ticket" width="240" height="240" style="display:block;border:none;">
+          <p style="margin:12px 0 0;color:#888;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;">Your unique entry QR code</p>
+        </div>
+      </div>
 
-      <p style="color: #666; font-size: 12px;">Keep this email safe. Your QR code is unique to you.</p>
+      <div style="margin:0 24px 24px;background:#f8f9fa;border-radius:8px;overflow:hidden;">
+        <div style="background:#e9ecef;padding:10px 16px;">
+          <strong style="color:#444;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;">📅 Event Details</strong>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:12px 16px;color:#666;font-size:13px;width:80px;vertical-align:top;">Event</td>
+            <td style="padding:12px 16px;color:#222;font-size:13px;font-weight:600;border-left:1px solid #e0e0e0;">${event.name}</td>
+          </tr>
+          <tr style="background:white;">
+            <td style="padding:12px 16px;color:#666;font-size:13px;vertical-align:top;">Date</td>
+            <td style="padding:12px 16px;color:#222;font-size:13px;border-left:1px solid #e0e0e0;">${eventDate}</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;color:#666;font-size:13px;vertical-align:top;">Location</td>
+            <td style="padding:12px 16px;color:#222;font-size:13px;border-left:1px solid #e0e0e0;">${event.location}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="margin:0 24px 28px;background:#e8f4fd;border-left:4px solid #007bff;border-radius:4px;padding:12px 16px;">
+        <p style="margin:0;color:#004085;font-size:13px;line-height:1.5;">
+          💡 <strong>Tip:</strong> Save this email or screenshot your QR code. You can also print this page for a physical ticket.
+        </p>
+      </div>
+
+      <div style="background:#f8f9fa;border-top:1px solid #e0e0e0;padding:16px 24px;text-align:center;">
+        <p style="margin:0;color:#999;font-size:11px;">This QR code is unique to you — please do not share it.</p>
+        <p style="margin:6px 0 0;color:#bbb;font-size:11px;">Event Registration System</p>
+      </div>
+
     </div>
   `;
 
   try {
-    MailApp.sendEmail({
-      to: email,
-      subject: subject,
-      htmlBody: htmlBody
-    });
+    MailApp.sendEmail({ to: email, subject: subject, htmlBody: htmlBody });
   } catch(err) {
     Logger.log("Failed to send confirmation email: " + err);
   }
 }
 
 function sendCheckInAlert(attendeeEmail, attendeeName, eventName) {
-  const subject = "Check-in Alert: " + attendeeName + " at " + eventName;
-  const body = attendeeName + " checked into " + eventName + " at " + new Date().toLocaleString();
+  const subject = "✅ Checked In: " + attendeeName + " — " + eventName;
+  const checkInTime = new Date().toLocaleString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+    hour: "2-digit", minute: "2-digit", second: "2-digit"
+  });
+
+  const htmlBody = `
+    <div style="font-family:Arial,Helvetica,sans-serif;max-width:500px;margin:0 auto;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
+
+      <div style="background:#28a745;padding:24px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">✅</div>
+        <h1 style="color:white;margin:0;font-size:20px;font-weight:700;">Attendee Checked In</h1>
+      </div>
+
+      <div style="padding:24px 24px 8px;">
+        <p style="margin:0 0 16px;color:#555;font-size:14px;">An attendee just checked in at your event.</p>
+        <table style="width:100%;border-collapse:collapse;background:#f8f9fa;border-radius:8px;overflow:hidden;">
+          <tr>
+            <td style="padding:12px 16px;color:#666;font-size:13px;width:80px;">Attendee</td>
+            <td style="padding:12px 16px;color:#222;font-size:13px;font-weight:600;border-left:1px solid #e0e0e0;">${attendeeName}</td>
+          </tr>
+          <tr style="background:white;">
+            <td style="padding:12px 16px;color:#666;font-size:13px;">Email</td>
+            <td style="padding:12px 16px;color:#222;font-size:13px;border-left:1px solid #e0e0e0;">${attendeeEmail}</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 16px;color:#666;font-size:13px;">Event</td>
+            <td style="padding:12px 16px;color:#222;font-size:13px;border-left:1px solid #e0e0e0;">${eventName}</td>
+          </tr>
+          <tr style="background:white;">
+            <td style="padding:12px 16px;color:#666;font-size:13px;">Time</td>
+            <td style="padding:12px 16px;color:#222;font-size:13px;border-left:1px solid #e0e0e0;">${checkInTime}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="padding:16px 24px;text-align:center;border-top:1px solid #e0e0e0;margin-top:16px;">
+        <p style="margin:0;color:#bbb;font-size:11px;">Event Registration System — Check-in Alert</p>
+      </div>
+
+    </div>
+  `;
 
   try {
-    MailApp.sendEmail({
-      to: ADMIN_EMAIL,
-      subject: subject,
-      body: body
-    });
+    MailApp.sendEmail({ to: ADMIN_EMAIL, subject: subject, htmlBody: htmlBody });
   } catch(err) {
     Logger.log("Failed to send check-in alert: " + err);
   }
