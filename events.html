@@ -35,6 +35,33 @@
     <p>Event Registration System &copy; 2026 | Phase 1 Functionality</p>
   </footer>
 
+  <!-- Registration Modal -->
+  <div id="register-modal" class="custom-modal-overlay">
+    <div class="custom-modal" style="max-width: 500px; position: relative;">
+      <span class="close-modal" id="close-modal-btn">&times;</span>
+      <h2 style="margin-top: 0;">Register Now</h2>
+      <div id="modal-event-summary"></div>
+      
+      <form id="register-form" style="margin-top: 20px;">
+        <input type="hidden" id="modal-event-id" name="eventId">
+        
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%; padding: 12px;">Complete Registration</button>
+      </form>
+      
+      <div id="form-message" style="margin-top: 15px;"></div>
+    </div>
+  </div>
+
   <script src="./assets/js/config.js"></script>
   <script src="./assets/js/api.js"></script>
   <script src="./assets/js/events.js"></script>
