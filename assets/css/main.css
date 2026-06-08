@@ -272,7 +272,6 @@ a:hover {
   animation: kinetic-up 0.9s var(--ease) 0.28s both;
 }
 
-/* Accent line that grows under the title */
 .hero-title::after {
   content: '';
   display: block;
@@ -311,7 +310,6 @@ a:hover {
   }
 }
 
-/* Hero subtitle */
 .hero-section>p,
 .hero-section p:not(.loading) {
   font-size: 1rem;
@@ -321,7 +319,6 @@ a:hover {
   animation: fade-up 0.7s var(--ease) 0.5s both;
 }
 
-/* Hero CTA wrapper */
 .hero-section>div:last-of-type {
   animation: fade-up 0.7s var(--ease) 0.65s both;
 }
@@ -457,7 +454,7 @@ a:hover {
 
 #events-container .card {
   margin-bottom: 0 !important;
-  /* Override JS inline style */
+
   display: flex;
   flex-direction: column;
 }
@@ -881,8 +878,8 @@ footer p {
 .custom-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(30, 45, 36, 0.85);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -937,6 +934,21 @@ footer p {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.close-modal:hover {
+  color: var(--color-danger, #ef4444);
 }
 
 
@@ -1219,4 +1231,26 @@ footer p {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+#events-list .table td:nth-child(5) span,
+#events-table-container .table td:nth-child(4) span {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+#events-list .table .btn:hover {
+  letter-spacing: 0.02em;
+}
+
+#events-list .table td:nth-child(6) button:nth-child(2):hover {
+  background: #e03131 !important;
+}
+
+#report-container .card:hover,
+.stats-grid .card:hover {
+  transform: none;
+  box-shadow: 0 4px 14px var(--shadow);
+  border-color: var(--border);
 }
