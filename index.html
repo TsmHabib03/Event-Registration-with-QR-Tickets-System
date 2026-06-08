@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event Registration with QR Tickets</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="./assets/css/main.css">
 </head>
+
 <body id="top">
   <nav>
     <a href="index.html" class="active">Home</a>
@@ -40,8 +44,8 @@
               <input type="email" id="lookup-email" required>
             </div>
             <div class="form-group">
-              <label for="lookup-event-id">Event ID (optional):</label>
-              <input type="text" id="lookup-event-id" placeholder="Leave blank to find all tickets">
+              <label for="lookup-event-id">Event ID *</label>
+              <input type="text" id="lookup-event-id" placeholder="Enter your Event ID" required>
             </div>
             <button type="submit" class="btn" style="width: 100%;">Find Ticket</button>
           </form>
@@ -78,12 +82,13 @@
   </script>
   <a href="#" class="scroll-top" id="scroll-top-btn" aria-label="Scroll to top">&uarr;</a>
   <script>
-    (function() {
+    (function () {
       var btn = document.getElementById('scroll-top-btn');
-      window.addEventListener('scroll', function() {
+      window.addEventListener('scroll', function () {
         btn.classList.toggle('visible', window.scrollY > 300);
       });
     })();
   </script>
 </body>
+
 </html>
